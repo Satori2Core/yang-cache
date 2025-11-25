@@ -40,7 +40,11 @@ func hashBKDR(s string) (hash int32) {
 	return hash
 }
 
+// 计算大于或等于输入容量的最小2的幂次方减一
 func maskOfNextPowOf2(cap uint16) uint16 {
+	if cap > 0 && cap&(cap-1) == 0 {
+		return cap - 1
+	}
 	cap |= cap >> 1
 	cap |= cap >> 2
 	cap |= cap >> 4

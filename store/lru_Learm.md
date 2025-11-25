@@ -21,7 +21,7 @@
 
 下图梳理了 Get 和 Set 方法的关键执行路径及线程安全控制：
 
-[lru_get_set_image](../images/lruCache.png)
+![lru_get_set_image](../images/lruCache.png)
 
 需要特别说明的是，流程中的“检查键是否存在”、“检查是否过期”、“更新链表结构”以及“淘汰节点”等步骤，都在互斥锁 (sync.RWMutex) 的保护下进行，从而保证了线程安全。Get 操作在发现过期键时，为了避免在持有读锁的情况下进行写操作，选择异步删除，这是一种优化策略。
 
