@@ -33,7 +33,7 @@ func init() {
 
 // ------ 哈希计算 -------
 
-func hashBKDR(s string) (hash int32) {
+func hashBKRD(s string) (hash int32) {
 	for i := 0; i < len(s); i++ {
 		hash = hash*131 + int32(s[i]) // 131 是一个常用的质子种子
 	}

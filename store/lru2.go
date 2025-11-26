@@ -69,7 +69,7 @@ func newLRU2Cache(opts Options) *lru2Store {
 
 func (s *lru2Store) Get(key string) (Value, bool) {
 	// 1. 计算键对应的分片索引（使用哈希和掩码）
-	idx := hashBKDR(key) & s.mask
+	idx := hashBKRD(key) & s.mask
 	// 锁定分片
 	s.locks[idx].Lock()
 	defer s.locks[idx].Unlock()
@@ -120,7 +120,7 @@ func (s *lru2Store) SetWithExpiration(key string, value Value, expiration time.D
 	}
 
 	// 计算分片并加锁
-	idx := hashBKDR(key) & s.mask
+	idx := hashBKRD(key) & s.mask
 	s.locks[idx].Lock()
 	defer s.locks[idx].Unlock()
 
@@ -131,7 +131,7 @@ func (s *lru2Store) SetWithExpiration(key string, value Value, expiration time.D
 }
 
 func (s *lru2Store) Delete(key string) bool {
-	idx := hashBKDR(key) & s.mask
+	idx := hashBKRD(key) & s.mask
 	s.locks[idx].Lock()
 	defer s.locks[idx].Unlock()
 
