@@ -46,3 +46,30 @@ g.m.Store(key, c)  // 把请求放在map里
 
 - 缺少 shared 返回值，调用方无法区分是直接结果还是共享结果。
 
+---
+
+## 简单优化操作：修复竞态条件
+
+```go
+func (g *Group) Do(key string, fn func() (interface{}, error)) (interface{}, error) {
+    // 使用LoadOrStore解决竞态条件
+    c := &call{}
+    c.wg.Add(1)
+    
+    if actual, loaded := g.m.LoadOrStore(key, c); loaded {
+        // 已存在其他请求
+        c = actual.(*call)
+        c.wg.Wait()
+        return c.val, c.err
+    }
+    
+    // 当前是第一个请求
+    defer func() {
+        g.m.Delete(key)
+        c.wg.Done()
+    }()
+    
+    c.val, c.err = fn()
+    return c.val, c.err
+}
+```
